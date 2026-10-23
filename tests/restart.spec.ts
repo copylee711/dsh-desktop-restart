@@ -247,14 +247,18 @@ describe('guards and profile change detection', () => {
 
   it('registers status and restart routes on host webServer', async () => {
     const routes = new Map<string, (req: IncomingMessage, res: ServerResponse) => void | Promise<void>>()
+    let dispose: (() => void) | undefined
     applyHost(
       {
         webServer: {
           port: 19387,
-          registerRoute(entry) {
+          register(entry) {
             routes.set(entry.path, entry.handler)
             return () => routes.delete(entry.path)
           },
+        },
+        effect(setup) {
+          dispose = setup() ?? undefined
         },
       },
       { enabled: true },
@@ -300,5 +304,7 @@ describe('guards and profile change detection', () => {
     const restartParsed = JSON.parse(bodyText) as { ok: boolean; code: string }
     expect(restartParsed.ok).toBe(false)
     expect(restartParsed.code).toBe('not-desktop')
+    dispose!()
+    expect(routes.size).toBe(0)
   })
 })

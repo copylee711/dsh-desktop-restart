@@ -4,7 +4,7 @@
 
 import { existsSync, readFileSync } from 'node:fs'
 import type { IncomingMessage } from 'node:http'
-import { basename, join } from 'node:path'
+import { basename, join, win32 } from 'node:path'
 
 export interface DesktopTopology {
   desktop: boolean
@@ -72,7 +72,7 @@ export function inspectDesktopHost(
       exe: execPath,
     }
   }
-  const exeName = basename(execPath).toLowerCase()
+  const exeName = (platform === 'win32' ? win32.basename(execPath) : basename(execPath)).toLowerCase()
   const isPlainNode = exeName === 'node.exe' || exeName === 'node'
   const runAsNode = env.ELECTRON_RUN_AS_NODE === '1' || Boolean(env.DSH_DESKTOP_NODE_EXECUTABLE)
   if (isPlainNode && !runAsNode) {

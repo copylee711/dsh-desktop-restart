@@ -1,6 +1,6 @@
 {
   "name": "@copylee/dsh-desktop-restart",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DeepSeek Harness 桌面版一键重启插件：在左下角官方更新按钮旁提供需重启提示胶囊与常驻重启入口，在 dsh-market 需重启横幅与标题栏内嵌立即重启按钮，支持活动任务与插件安装守卫及优雅退出恢复。",
   "type": "module",
   "license": "MIT",
@@ -31,7 +31,8 @@
     "lib/helper.cjs",
     "lib/client.js",
     "lib/types/**/*.d.ts",
-    "assets/*.png",
+    "assets/footer-idle.png",
+    "assets/market-pending.png",
     "cordis.patch.yml",
     "README.md",
     "LICENSE"

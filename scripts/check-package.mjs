@@ -11,12 +11,17 @@ for (const required of [
   'lib/types/index.d.ts',
   'cordis.patch.yml',
   'README.md',
+  'assets/footer-idle.png',
+  'assets/market-pending.png',
   'LICENSE',
 ]) {
   if (!paths.has(required)) throw new Error(`Missing package file: ${required}`)
 }
 
 for (const path of paths) {
+  if (/^assets\//.test(path) && !['assets/footer-idle.png', 'assets/market-pending.png'].includes(path)) {
+    throw new Error(`Unapproved screenshot packaged: ${path}`)
+  }
   if (/^(\.qa|scripts|tests|node_modules)\//.test(path) || /\.npmrc$/.test(path)) {
     throw new Error(`Private or development file packaged: ${path}`)
   }

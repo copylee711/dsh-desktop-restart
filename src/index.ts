@@ -113,7 +113,7 @@ function sendJson(response: ServerResponse, status: number, body: unknown): void
 export interface HostContextLike {
   webServer: {
     port?: number
-    registerRoute(entry: {
+    register(entry: {
       kind: 'exact'
       path: string
       handler: (request: IncomingMessage, response: ServerResponse) => void | Promise<void>
@@ -203,7 +203,7 @@ export function apply(ctx: HostContextLike, initialConfig: PluginConfig = {}): v
     return { handoffPath, logPath, helperPid: child.pid }
   }
 
-  const offStatus = ctx.webServer.registerRoute({
+  const offStatus = ctx.webServer.register({
     kind: 'exact',
     path: ROUTE_STATUS,
     handler: (request, response) => {
@@ -239,7 +239,7 @@ export function apply(ctx: HostContextLike, initialConfig: PluginConfig = {}): v
     },
   })
 
-  const offRestart = ctx.webServer.registerRoute({
+  const offRestart = ctx.webServer.register({
     kind: 'exact',
     path: ROUTE_RESTART,
     handler: (request, response) => {
