@@ -1,0 +1,41 @@
+name: Publish npm
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+      - run: npm install --global npm@^11
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm typecheck && pnpm test && pnpm build
+      - name: Validate tag and package
+        run: |
+          node --input-type=module -e "import p from './package.json' with {type:'json'}; if(process.env.GITHUB_REF_TYPE==='tag' && process.env.GITHUB_REF_NAME!=='v'+p.version) throw Error('Tag must match package version')"
+          npm pack --dry-run
+          npm pack --dry-run --ignore-scripts --json > package-manifest.json
+          node scripts/check-package.mjs package-manifest.json
+      - name: Publish with npm Trusted Publisher
+        run: |
+          PACKAGE=$(node -p 'require("./package.json").name')
+          VERSION=$(node -p 'require("./package.json").version')
+          if npm view "$PACKAGE@$VERSION" version --prefer-online >/dev/null 2>&1; then
+            echo "$PACKAGE@$VERSION already published; skipping."
+          else
+            npm publish --access public --provenance
+          fi

@@ -1,0 +1,112 @@
+{
+  "name": "@copylee/dsh-desktop-restart",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness 桌面版一键重启插件：在左下角官方更新按钮旁提供需重启提示胶囊与常驻重启入口，在 dsh-market 需重启横幅与标题栏内嵌立即重启按钮，支持活动任务与插件安装守卫及优雅退出恢复。",
+  "type": "module",
+  "license": "MIT",
+  "author": "copylee",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/copylee711/dsh-desktop-restart.git"
+  },
+  "homepage": "https://github.com/copylee711/dsh-desktop-restart#readme",
+  "bugs": {
+    "url": "https://github.com/copylee711/dsh-desktop-restart/issues"
+  },
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/helper.cjs",
+    "lib/client.js",
+    "lib/types/**/*.d.ts",
+    "assets/*.png",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "os": [
+    "win32"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "desktop",
+    "restart",
+    "hot-restart",
+    "electron",
+    "cordis"
+  ],
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.2.0-rc.2"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-primitives",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc && tsdown",
+    "test": "vitest run",
+    "pack:check": "npm pack --dry-run",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0 <5",
+    "@deepseek-ai/schemastery": ">=3.18.0 <4",
+    "react": ">=18.2.0 <19"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/schemastery": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "~4.0.4",
+    "@deepseek-ai/schemastery": "3.18.4",
+    "@types/node": "^22.20.0",
+    "@types/react": "~18.3.31",
+    "@types/react-dom": "18.3.7",
+    "react": "^18.3.1",
+    "react-dom": "18.3.1",
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}

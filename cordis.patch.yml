@@ -1,0 +1,4 @@
+- insert:
+    - id: copylee-desktop-restart
+      name: '@copylee/dsh-desktop-restart'
+      config: {}
