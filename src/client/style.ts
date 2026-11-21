@@ -96,6 +96,36 @@ export const CSS = `
   outline-offset: 2px;
 }
 
+/* Pill + cancel button while a restart is waiting for confirmation */
+.dsdr-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+.dsdr-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--dsw-radius-sm, 8px);
+  background: transparent;
+  color: var(--dsw-alias-label-secondary, #4e5969);
+  cursor: pointer;
+  flex: none;
+}
+.dsdr-cancel:hover {
+  background: var(--dsw-alias-interactive-bg-hover, rgba(0, 0, 0, 0.05));
+  color: var(--dsw-alias-label-primary, #1f2328);
+}
+.dsdr-cancel:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-primary, #4D6BFE);
+  outline-offset: 1px;
+}
+
 /* Injected buttons inside dsh-market (matches native @deepseek-ai/dsh-client-ui-primitives Button size="sm") */
 .dsdr-market-banner-btn {
   box-sizing: border-box;

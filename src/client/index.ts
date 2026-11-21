@@ -80,6 +80,24 @@ function refreshIcon(size = 15, spin = false): React.ReactElement {
   )
 }
 
+function closeIcon(size = 12): React.ReactElement {
+  return h(
+    'svg',
+    {
+      width: size,
+      height: size,
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      strokeWidth: 2.25,
+      strokeLinecap: 'round',
+      'aria-hidden': true,
+    },
+    h('path', { d: 'M18 6 6 18' }),
+    h('path', { d: 'm6 6 12 12' }),
+  )
+}
+
 class RestartController {
   private snapshot: StoreSnapshot = {
     status: null,
@@ -188,6 +206,19 @@ class RestartController {
     }
   }
 
+  /** Back out of a pending confirmation (misclick, change of mind). */
+  cancel = (): void => {
+    const { phase } = this.snapshot
+    if (phase !== 'armed' && phase !== 'warn-tasks' && phase !== 'error') return
+    this.clearArmTimer()
+    this.update({ phase: 'idle', message: '' })
+  }
+
+  isConfirming(): boolean {
+    const { phase } = this.snapshot
+    return phase === 'armed' || phase === 'warn-tasks' || phase === 'error'
+  }
+
   async executeRestart(force: boolean): Promise<void> {
     this.clearArmTimer()
     try {
@@ -253,12 +284,18 @@ class RestartController {
     void this.marketBridge.refreshFromApi()
     this.marketBridge.syncDom()
 
+    const onKey = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape' && this.isConfirming()) this.cancel()
+    }
+    document.addEventListener('keydown', onKey)
+
     this.pollTimer = setInterval(() => {
       void this.refreshStatus()
       void this.marketBridge?.refreshFromApi()
     }, 3_500)
 
     return () => {
+      document.removeEventListener('keydown', onKey)
       this.clearArmTimer()
       if (this.pollTimer !== null) clearInterval(this.pollTimer)
       this.marketBridge?.dispose()
@@ -322,7 +359,25 @@ function SidebarFooterEntry({ wide = true }: { wide?: boolean }): React.ReactEle
   else if (phase === 'restarting') pillLabel = '重启中…'
   else if (phase === 'error') pillLabel = '重试'
 
-  const buttonNode = showPill
+  const confirming = controller.isConfirming()
+  const cancelNode = confirming
+    ? h(
+        'button',
+        {
+          type: 'button',
+          className: 'dsdr-cancel',
+          title: '取消（Esc）',
+          'aria-label': '取消重启',
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation()
+            controller.cancel()
+          },
+        },
+        closeIcon(),
+      )
+    : null
+
+  const mainNode = showPill
     ? h(
         'button',
         {
@@ -359,6 +414,10 @@ function SidebarFooterEntry({ wide = true }: { wide?: boolean }): React.ReactEle
           ? h('span', { className: 'dsdr-entry-dot' })
           : null,
       )
+
+  const buttonNode = cancelNode
+    ? h('span', { className: 'dsdr-group' }, mainNode, cancelNode)
+    : mainNode
 
   if (wide && triggerRowHost) {
     return ReactDOM.createPortal(buttonNode, triggerRowHost)

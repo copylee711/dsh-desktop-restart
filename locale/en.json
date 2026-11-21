@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Desktop Restart",
+    "description": "A restart button and a \"restart needed\" pill in the sidebar footer, plus restart buttons in the plugin market banner; running tasks and installs are checked first."
+  }
+}
